@@ -1,0 +1,12 @@
+{
+  "fer2013": {
+    "status": "error",
+    "message": "Automatic download failed; manual download required.",
+    "timestamp": "2026-04-30T13:23:14"
+  },
+  "affectnet": {
+    "status": "manual_required",
+    "message": "Dataset requires manual registration.",
+    "timestamp": "2026-04-30T13:23:14"
+  }
+}
