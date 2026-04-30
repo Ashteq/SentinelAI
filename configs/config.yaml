@@ -1,0 +1,97 @@
+# =============================================================================
+# SentinelAI — Central Configuration
+# =============================================================================
+# Edit this file to customise every aspect of training and inference.
+# All paths are relative to the project root unless marked [absolute].
+
+# ── Project metadata ──────────────────────────────────────────────────────────
+project:
+  name: SentinelAI
+  version: "0.1.0"
+  seed: 42
+  device: "cuda"         # "cuda" | "cpu" | "mps"
+  precision: "float32"   # "float32" | "float16" | "bfloat16"
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+data:
+  root: "data/"
+  train_split: "train"
+  val_split: "val"
+  test_split: "test"
+  num_workers: 4
+  pin_memory: true
+  image_size: [224, 224]     # [H, W]
+  mean: [0.485, 0.456, 0.406]
+  std:  [0.229, 0.224, 0.225]
+
+# ── Models ────────────────────────────────────────────────────────────────────
+models:
+  face:
+    backbone: "resnet50"         # resnet50 | mobilenet_v3_small | efficientnet_b0
+    embedding_dim: 512
+    pretrained: true
+    freeze_backbone: false
+    num_emotion_classes: null    # set an int to enable the auxiliary head
+
+  posture:
+    num_keypoints: 17            # COCO skeleton keypoints
+    embedding_dim: 256
+    hidden_dim: 256
+    num_posture_classes: null    # set an int to enable the classification head
+
+  env:
+    embedding_dim: 256
+    pretrained: true
+    num_scene_classes: null      # set an int to enable the scene-classification head
+    num_seg_classes: null        # set an int to enable the segmentation decoder
+
+  fusion:
+    strategy: "concat_mlp"       # "concat_mlp" | "attention"
+    hidden_dim: 512
+    num_classes: 2               # downstream task classes (e.g. normal vs. anomalous)
+
+# ── Training ──────────────────────────────────────────────────────────────────
+training:
+  epochs: 50
+  batch_size: 32
+  gradient_clip_norm: 1.0
+  log_every_n_steps: 20
+  val_every_n_epochs: 1
+  save_every_n_epochs: 5
+  checkpoint_dir: "checkpoints/"
+  resume_from: null              # path to a checkpoint to resume from
+
+# ── Optimiser ─────────────────────────────────────────────────────────────────
+optimizer:
+  name: "adamw"                  # "adamw" | "sgd" | "adam"
+  lr: 1.0e-4
+  weight_decay: 1.0e-2
+  betas: [0.9, 0.999]
+
+# ── Scheduler ─────────────────────────────────────────────────────────────────
+scheduler:
+  name: "cosine"                 # "cosine" | "step" | "plateau" | "none"
+  warmup_epochs: 5
+  min_lr: 1.0e-6
+  step_size: 10                  # for StepLR
+  gamma: 0.1                     # for StepLR
+
+# ── Loss ──────────────────────────────────────────────────────────────────────
+loss:
+  primary: "cross_entropy"
+  label_smoothing: 0.1
+  class_weights: null            # list of floats for imbalanced datasets
+
+# ── Inference / evaluation ────────────────────────────────────────────────────
+inference:
+  checkpoint: null               # path to checkpoint for inference
+  confidence_threshold: 0.5
+  output_dir: "outputs/"
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+logging:
+  level: "INFO"
+  use_wandb: false
+  wandb_project: "sentinelai"
+  use_tensorboard: true
+  tensorboard_dir: "runs/"
