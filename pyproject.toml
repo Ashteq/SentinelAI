@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "sentinelai"
+version = "0.1.0"
+description = "Modular multi-modal computer vision framework (PyTorch)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "omegaconf>=2.3.0",
+    "hydra-core>=1.3.2",
+    "numpy>=1.26.0",
+    "tqdm>=4.66.0",
+    "einops>=0.7.0",
+    "Pillow>=10.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.1.0",
+    "pytest-cov>=5.0.0",
+    "black>=24.3.0",
+    "ruff>=0.4.0",
+    "mypy>=1.9.0",
+    "pre-commit>=3.7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sentinelai*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+strict = false

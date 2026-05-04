@@ -1,0 +1,81 @@
+project:
+  name: SentinelAI
+  version: 0.1.0
+  seed: 42
+  device: cuda
+  precision: float32
+data:
+  root: data/
+  train_split: train
+  val_split: val
+  test_split: test
+  num_workers: 4
+  pin_memory: true
+  image_size:
+  - 224
+  - 224
+  mean:
+  - 0.485
+  - 0.456
+  - 0.406
+  std:
+  - 0.229
+  - 0.224
+  - 0.225
+models:
+  face:
+    backbone: resnet50
+    embedding_dim: 512
+    pretrained: true
+    freeze_backbone: false
+    num_emotion_classes: null
+  posture:
+    num_keypoints: 17
+    embedding_dim: 256
+    hidden_dim: 256
+    num_posture_classes: null
+  env:
+    embedding_dim: 256
+    pretrained: true
+    num_scene_classes: null
+    num_seg_classes: null
+  fusion:
+    strategy: concat_mlp
+    hidden_dim: 512
+    num_classes: 2
+training:
+  epochs: 50
+  batch_size: 32
+  gradient_clip_norm: 1.0
+  log_every_n_steps: 20
+  val_every_n_epochs: 1
+  save_every_n_epochs: 5
+  checkpoint_dir: checkpoints/
+  resume_from: null
+optimizer:
+  name: adamw
+  lr: 0.0001
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.999
+scheduler:
+  name: cosine
+  warmup_epochs: 5
+  min_lr: 1.0e-06
+  step_size: 10
+  gamma: 0.1
+loss:
+  primary: cross_entropy
+  label_smoothing: 0.1
+  class_weights: null
+inference:
+  checkpoint: null
+  confidence_threshold: 0.5
+  output_dir: outputs/
+logging:
+  level: INFO
+  use_wandb: false
+  wandb_project: sentinelai
+  use_tensorboard: true
+  tensorboard_dir: runs/
